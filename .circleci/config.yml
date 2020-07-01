@@ -3,14 +3,11 @@ jobs:
   build:
     docker:
       - image: circleci/node:10.16-browsers
-      - image: mongo:latest
+      - image: mongo:bionic
     working_directory: ~/your-project
     steps:
       - checkout
       - run: npm install
-      - run:
-          name: start MongoDB
-          command: mongod
       - run: npm run start
       - run: sudo npm install -g @lhci/cli@0.4.x
       - run: lhci autorun
