@@ -8,7 +8,9 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - command: mongod
+      - run:
+          name: start MongoDB
+          command: mongod
       - run: npm run start
       - run: sudo npm install -g @lhci/cli@0.4.x
       - run: lhci autorun
