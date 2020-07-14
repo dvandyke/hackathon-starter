@@ -1,7 +1,7 @@
 version: 2.1
 executors:
   docker-executor:
-    docker: 
+    docker:
       - image: circleci/node-browsers
 
 jobs:
@@ -50,16 +50,7 @@ jobs:
                 --admin_user=admin \
                 --admin_password=admin \
                 --admin_email=foo@bar.com
-
-version: 2.1
-jobs:
-  build:
-    docker:
-      - image: circleci/node:10.16-browsers
-      - image: mongo:bionic
-    working_directory: ~/your-project
-    steps:
-      - checkout
-      - run: npm install
-      - run: sudo npm install -g @lhci/cli@0.4.x
-      - run: lhci autorun
+      - run:
+          name: LHCI
+          command: |
+            npm install && sudo npm install -g @lhci/cli@0.4.x && lhci autorun
