@@ -1,4 +1,57 @@
 version: 2.1
+executors:
+  docker-executor:
+    docker: 
+      - image: circleci/node-browsers
+
+jobs:
+  test_plugin:
+    executor: docker-executor
+    steps:
+      - checkout
+      - run:
+          name: build plugin
+          command: cd frontend && npm install && npm run export
+      - setup_remote_docker
+      - run:
+          name: Set up network
+          command: |
+            docker network create wp-network
+      - run:
+          name: Set up database
+          command: |
+            docker run -d \
+              -e MYSQL_ROOT_PASSWORD=1234 \
+              -e MYSQL_DATABASE=wordpress \
+              --name db \
+              --network wp-network \
+              mysql:5.7
+      - run:
+          name: Setup WordPress
+          command: |
+            docker run -d \
+              -e WORDPRESS_DB_HOST=db:3306 \
+              -e WORDPRESS_DB_USER=root \
+              -e WORDPRESS_DB_PASSWORD=1234 \
+              -e WORDPRESS_DB_NAME=wordpress \
+              -e WORDPRESS_CONFIG_EXTRA="define('WP_SITEURL', 'http://' . \$_SERVER['HTTP_HOST']); define('WP_HOME', 'http://' . \$_SERVER['HTTP_HOST']);" \
+              --name wp-container \
+              --network wp-network \
+              wordpress
+      - run:
+          name: Install WordPress
+          command: |
+            docker run -it --rm \
+              --volumes-from wp-container \
+              --network wp-network \
+              wordpress:cli core install \
+                --url=localhost \
+                --title=test \
+                --admin_user=admin \
+                --admin_password=admin \
+                --admin_email=foo@bar.com
+
+version: 2.1
 jobs:
   build:
     docker:
