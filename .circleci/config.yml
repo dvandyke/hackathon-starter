@@ -50,7 +50,7 @@ jobs:
       - run:
           name: LHCI
           command: |
-            npm install && sudo npm install -g @lhci/cli@0.4.x && lhci autorun
+            npm install && sudo npm install -g @lhci/cli@0.4.x && lhci collect --numberOfRuns=5 --url=http://\$_SERVER['HTTP_HOST']
 workflows:
   test:
     jobs:
