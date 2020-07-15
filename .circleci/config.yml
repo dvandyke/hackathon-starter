@@ -50,7 +50,7 @@ jobs:
       - run:
           name: LHCI
           command: |
-            npm install && sudo npm install -g @lhci/cli@0.4.x && lhci collect --numberOfRuns=5 --url=http://localhost
+            npm install && sudo npm install -g @lhci/cli@0.4.x && lhci collect --numberOfRuns=5 --url=${wp-container}
 workflows:
   test:
     jobs:
