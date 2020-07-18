@@ -56,6 +56,10 @@ jobs:
             docker exec -it my-app sudo npm install -g @lhci/cli@0.4.x
             docker exec my-app sudo mkdir /.lighthouseci
             docker exec my-app sudo lhci collect --numberOfRuns=1 --url=http://wp-container
+      - run:
+          name: "copy test results"
+          command: |
+            docker cp my-app:/.lighthouseci /.lighthouseci
       # - run:
       #     name: "run curl"
       #     command: sudo docker exec my-app curl --retry 10 --retry-connrefused http://localhost:8080
