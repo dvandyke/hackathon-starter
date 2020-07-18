@@ -55,8 +55,8 @@ jobs:
             docker ps -a
             docker network inspect wp-network
             docker exec -it my-app sudo npm install -g @lhci/cli@0.4.x
-            docker exect -it my-app lhci healthcheck
             docker exec my-app sudo mkdir /.lighthouseci
+            docker exec my-app sudo lhci healthcheck
             docker exec my-app sudo lhci collect --numberOfRuns=1 --url=http://wp-container
       - run:
           name: "copy test results"
