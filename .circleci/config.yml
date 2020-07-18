@@ -60,6 +60,8 @@ jobs:
           name: "copy test results"
           command: |
             docker cp my-app:/.lighthouseci .
+      - store_artifacts:
+          path: "/.lighthoueci"
       # - run:
       #     name: "run curl"
       #     command: sudo docker exec my-app curl --retry 10 --retry-connrefused http://localhost:8080
