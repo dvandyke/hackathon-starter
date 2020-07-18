@@ -52,6 +52,8 @@ jobs:
           command: |
             docker run -it -dp 8001:8000 -w="/project" -e LHCI_BUILD_CONTEXT__CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --network wp-network --name my-app circleci/node:latest-browsers
             docker cp ~/project/  my-app:/project/
+            docker exec my-app pwd
+            docker exec my-app ls -a
             docker exec -it my-app sudo npm install -g @lhci/cli@0.4.x
             docker exec my-app sudo mkdir /project/.lighthouseci
             docker exec my-app sudo lhci healthcheck
@@ -59,7 +61,7 @@ jobs:
       - run:
           name: "copy test results"
           command: |
-            docker cp my-app:/.lighthouseci .
+            docker cp my-app:/project/.lighthouseci .
       - store_artifacts:
           path: "~/project/.lighthouseci"
       # - run:
