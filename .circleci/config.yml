@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Set up database
           command: |
-            sudo docker run -d \
+            docker run -d \
               -e MYSQL_ROOT_PASSWORD=1234 \
               -e MYSQL_DATABASE=wordpress \
               --name db \
