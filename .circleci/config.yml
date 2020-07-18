@@ -49,14 +49,13 @@ jobs:
                 --admin_email=foo@bar.com
       - run:
           name: "move lighthouse config"
-          command: docker cp ~/project/lighthouserc.js  my-app:/
+          command: docker cp /project/lighthouserc.js  my-app:/
       - run:
           name: "install curl"
           command: |
             docker run -it -dp 8001:8000 --network wp-network --name my-app circleci/node:latest-browsers
             docker ps -a
             docker network inspect wp-network
-            docker cp /project/lighthouserc.js  my-app:/
             docker exec -it my-app sudo npm install -g @lhci/cli@0.4.x
             docker exec my-app sudo mkdir /.lighthouseci
             docker exec my-app sudo lhci collect --numberOfRuns=1 --url=http://wp-container
