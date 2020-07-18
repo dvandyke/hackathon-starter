@@ -61,7 +61,7 @@ jobs:
           command: |
             docker cp my-app:/.lighthouseci .
       - store_artifacts:
-          path: "/.lighthoueci"
+          path: "~/project/.lighthouseci"
       # - run:
       #     name: "run curl"
       #     command: sudo docker exec my-app curl --retry 10 --retry-connrefused http://localhost:8080
