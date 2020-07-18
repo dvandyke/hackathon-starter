@@ -50,8 +50,7 @@ jobs:
       - run:
           name: "install curl"
           command: |
-            docker run -it -dp 8001:8000 --network wp-network --name my-app circleci/node:latest-browsers \
-            -e LHCI_BUILD_CONTEXT__CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            docker run -it -dp 8001:8000 -e LHCI_BUILD_CONTEXT__CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --network wp-network --name my-app circleci/node:latest-browsers
             docker cp ~/project/lighthouserc.js  my-app:/
             docker ps -a
             docker network inspect wp-network
