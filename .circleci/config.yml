@@ -13,11 +13,11 @@ jobs:
       - run:
           name: Set up network
           command: |
-            docker network create wp-network
+            sudo docker network create wp-network
       - run:
           name: Set up database
           command: |
-            docker run -d \
+            sudo docker run -d \
               -e MYSQL_ROOT_PASSWORD=1234 \
               -e MYSQL_DATABASE=wordpress \
               --name db \
@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Setup WordPress
           command: |
-            docker run -d \
+            sudo docker run -d -p 8080:80 \
               -e WORDPRESS_DB_HOST=db:3306 \
               -e WORDPRESS_DB_USER=root \
               -e WORDPRESS_DB_PASSWORD=1234 \
@@ -38,7 +38,7 @@ jobs:
       - run:
           name: Install WordPress
           command: |
-            docker run -it --rm \
+            sudo docker run -it --rm  \
               --volumes-from wp-container \
               --network wp-network \
               wordpress:cli core install \
@@ -48,9 +48,67 @@ jobs:
                 --admin_password=admin \
                 --admin_email=foo@bar.com
       - run:
-          name: LHCI
+          name: "install curl"
           command: |
-            npm install && sudo npm install -g @lhci/cli@0.4.x && lhci collect --numberOfRuns=5 --url=${wp-container}
+            sudo docker run -it -dp 8001:8000 --network wp-network --name my-app circleci/node:latest-browsers
+            sudo docker ps -a
+            sudo docker network inspect wp-network
+            sudo docker exec -it my-app sudo npm install -g @lhci/cli@0.4.x
+            sudo docker exec my-app sudo mkdir /.lighthouseci
+            sudo docker exec my-app sudo lhci collect --numberOfRuns=1 --url=http://wp-container
+      # - run:
+      #     name: "run curl"
+      #     command: sudo docker exec my-app curl --retry 10 --retry-connrefused http://localhost:8080
+      # - run:
+      #     name: "test command"
+      #     command: sudo npm install -g @lhci/cli@0.4.x && lhci collect --numberOfRuns=5 --url=http://localhost:8080
+# executors:
+#   docker-executor:
+#     docker:
+#       - image: circleci/php:7.4.3-node-browsers
+#       - image: circleci/mysql:5.7
+#         environment:
+#           MYSQL_ROOT_PASSWORD: root
+#           MYSQL_DATABASE: wordpress
+#           MYSQL_USER: user
+#           MYSQL_PASSWORD: password
+
+# jobs:
+#   test_plugin:
+#     executor: docker-executor
+#     steps:
+#       - checkout
+#       - run:
+#           name: Waiting for MySQL to be ready
+#           command: |
+#             for i in `seq 1 10`;
+#             do
+#               nc -z 127.0.0.1 3306 && echo Success && exit 0
+#               echo -n .
+#               sleep 1
+#             done
+#             echo Failed waiting for MySQL && exit 1
+#       - run:
+#           name: "fetch WP-CLI"
+#           command: curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+#       - run:
+#           name: "Make WP-CLI executable"
+#           command: chmod +x wp-cli.phar
+#       - run:
+#           name: "install mysql client"
+#           command: sudo apt-get install default-mysql-client
+#       - run:
+#           name: "download wordpress"
+#           command: ./wp-cli.phar core download --allow-root --path=wordpress
+#       - run:
+#           name: "generate wp-config.php"
+#           command: ./wp-cli.phar core config --allow-root --dbname=wordpress --dbuser=user --dbpass=password --dbhost=127.0.0.1 --path=wordpress
+#       - run:
+#           name: "Install Wordpress"
+#           command: ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --title=WordPress --path=wordpress
+#       - run:
+#           name: "test command"
+#           command: npm install && sudo npm install -g @lhci/cli@0.4.x && lhci collect --numberOfRuns=5 --url=http://localhost:80
 workflows:
   test:
     jobs:
