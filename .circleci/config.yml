@@ -50,7 +50,7 @@ jobs:
       - run:
           name: "install curl"
           command: |
-            docker run -it -dp 8001:8000 -w="/project" -e L-e LHCI_BUILD_CONTEXT__CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --network wp-network --name my-app circleci/node:latest-browsers
+            docker run -it -dp 8001:8000 -w="/project" -e LHCI_BUILD_CONTEXT__CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --network wp-network --name my-app circleci/node:latest-browsers
             docker cp ~/project/.  my-app:/project/
             docker exec my-app pwd
             docker exec my-app ls -a
