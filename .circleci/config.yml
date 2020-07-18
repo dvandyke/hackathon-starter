@@ -11,6 +11,10 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Set up network
+          command: |
+            docker network create wp-network
+      - run:
           name: Set up database
           command: |
             docker run -d \
@@ -22,7 +26,7 @@ jobs:
       - run:
           name: Setup WordPress
           command: |
-            sudo docker run -d -p 8080:80 \
+            docker run -d -p 8080:80 \
               -e WORDPRESS_DB_HOST=db:3306 \
               -e WORDPRESS_DB_USER=root \
               -e WORDPRESS_DB_PASSWORD=1234 \
@@ -34,7 +38,7 @@ jobs:
       - run:
           name: Install WordPress
           command: |
-            sudo docker run -it --rm  \
+            docker run -it --rm  \
               --volumes-from wp-container \
               --network wp-network \
               wordpress:cli core install \
@@ -46,12 +50,12 @@ jobs:
       - run:
           name: "install curl"
           command: |
-            sudo docker run -it -dp 8001:8000 --network wp-network --name my-app circleci/node:latest-browsers
-            sudo docker ps -a
-            sudo docker network inspect wp-network
-            sudo docker exec -it my-app sudo npm install -g @lhci/cli@0.4.x
-            sudo docker exec my-app sudo mkdir /.lighthouseci
-            sudo docker exec my-app sudo lhci collect --numberOfRuns=1 --url=http://wp-container
+            docker run -it -dp 8001:8000 --network wp-network --name my-app circleci/node:latest-browsers
+            docker ps -a
+            docker network inspect wp-network
+            docker exec -it my-app sudo npm install -g @lhci/cli@0.4.x
+            docker exec my-app sudo mkdir /.lighthouseci
+            docker exec my-app sudo lhci collect --numberOfRuns=1 --url=http://wp-container
       # - run:
       #     name: "run curl"
       #     command: sudo docker exec my-app curl --retry 10 --retry-connrefused http://localhost:8080
