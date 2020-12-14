@@ -9,11 +9,5 @@
     "Comment": {
       "body": "string",
       "post": "Post"
-    },
-    "Page": {
-        "title": "string",
-        "views": "int",
-        "createdAt": "date",
-        "post": "Post"
     }
   }
